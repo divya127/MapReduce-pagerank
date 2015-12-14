@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="2522fbed-13f3-422b-9393-dee06994c6ab" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu.neu.mapreduce.project/PageRank.java" afterPath="$PROJECT_DIR$/src/edu.neu.mapreduce.project/PageRank.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Project.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -28,8 +29,8 @@
       <file leaf-file-name="PageRank.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/edu.neu.mapreduce.project/PageRank.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.7062024">
-              <caret line="102" column="30" selection-start-line="102" selection-start-column="30" selection-end-line="102" selection-end-column="30" />
+            <state vertical-scroll-proportion="0.5266594">
+              <caret line="97" column="0" selection-start-line="97" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -37,11 +38,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Project.iml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Project.iml">
+      <file leaf-file-name="XMLParser.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/edu.neu.mapreduce.project/XMLParser.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="9" column="54" selection-start-line="9" selection-start-column="54" selection-end-line="9" selection-end-column="54" />
+              <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RankCalculator.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/edu.neu.mapreduce.project/RankCalculator.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RankOrderer.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/edu.neu.mapreduce.project/RankOrderer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -79,6 +100,9 @@
         <option value="$PROJECT_DIR$/src/com.neu.mapreduce.project/Outlinks.java" />
         <option value="$PROJECT_DIR$/src/edu.neu.mapreduce.project/Outlinks.java" />
         <option value="$PROJECT_DIR$/src/edu.neu.mapreduce.project/FileCountFilter.java" />
+        <option value="$PROJECT_DIR$/src/edu.neu.mapreduce.project/XMLParser.java" />
+        <option value="$PROJECT_DIR$/src/edu.neu.mapreduce.project/RankOrderer.java" />
+        <option value="$PROJECT_DIR$/src/edu.neu.mapreduce.project/RankCalculator.java" />
         <option value="$PROJECT_DIR$/src/edu.neu.mapreduce.project/PageRank.java" />
       </list>
     </option>
@@ -103,7 +127,7 @@
     <OptionsSetting value="true" id="Update" />
     <OptionsSetting value="true" id="Status" />
     <OptionsSetting value="true" id="Edit" />
-    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="1" id="Add" />
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectView">
@@ -438,12 +462,12 @@
       <updated>1449868759174</updated>
       <workItem from="1449868762463" duration="7970000" />
       <workItem from="1449955260535" duration="5236000" />
-      <workItem from="1450106455651" duration="2251000" />
+      <workItem from="1450106455651" duration="3086000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="15457000" />
+    <option name="totallyTimeSpent" value="16292000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -509,16 +533,40 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Project.iml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
+        <state vertical-scroll-proportion="0.1468988">
           <caret line="9" column="54" selection-start-line="9" selection-start-column="54" selection-end-line="9" selection-end-column="54" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu.neu.mapreduce.project/RankOrderer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu.neu.mapreduce.project/RankCalculator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu.neu.mapreduce.project/XMLParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/edu.neu.mapreduce.project/PageRank.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7062024">
-          <caret line="102" column="30" selection-start-line="102" selection-start-column="30" selection-end-line="102" selection-end-column="30" />
+        <state vertical-scroll-proportion="0.5266594">
+          <caret line="97" column="0" selection-start-line="97" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

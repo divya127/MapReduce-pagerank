@@ -1,9 +1,7 @@
 package edu.neu.mapreduce.project;
 
 // Java classes
-import java.io.IOException;
 import java.net.URI;
-import java.util.Iterator;
 // Hadoop classes
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -16,10 +14,6 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 // Apache Project classes
 import org.apache.log4j.Logger;
-// GSON classes
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 /**
  * Use of Common Crawl 'metadata' files to quickly gather high level information about the corpus'
@@ -34,79 +28,6 @@ public class PageRank extends Configured implements Tool {
     private static final Logger LOG = Logger.getLogger(PageRank.class);
     private static final String MAX_FILES_KEY = "pagerank.max.files";
 
-    /**
-     * Mapping class that produces statistics about the Common Crawl corpus.
-     */
-    public static class OutlinksMapper extends MapReduceBase implements Mapper<Text, Text, Text, Text> {
-
-        // create a counter group for Mapper-specific statistics
-        private final String _counterGroup = "Custom Mapper Counters";
-
-        // implement the main "map" function
-        public void map(Text key, Text value, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
-
-            // key & value are "Text" right now ...
-            String url = key.toString();
-            String json = value.toString();
-
-            try {
-                // See if the page has a successful HTTP code
-                JsonParser jsonParser = new JsonParser();
-                JsonObject jsonObj = jsonParser.parse(json).getAsJsonObject();
-
-                String disposition = "[no status]";
-
-                if (jsonObj.has("disposition")) {
-                    disposition = jsonObj.get("disposition").getAsString().trim().toUpperCase();
-                    if (disposition.equals("SUCCESS") && jsonObj.has("content")) {
-                        JsonObject content = (JsonObject) jsonObj.get("content");
-                        if (content.has("type")) {
-                            if ("html-doc".equalsIgnoreCase(content.get("type").getAsString().trim()
-                                    .toLowerCase())) {
-                                int counter = 0;
-                                StringBuilder outLinks = new StringBuilder();
-                                if (content.has("links")) {
-                                    JsonArray allLinks = content.getAsJsonArray("links");
-                                    for (int i = 0; i < allLinks.size(); i++) {
-                                        JsonObject obj = allLinks.get(i).getAsJsonObject();
-                                        if (obj.has("href")) {
-                                            String href = obj.get("href").getAsString().trim();
-                                            outLinks.append(href).append(",");
-                                            counter++;
-                                        }
-                                    }
-                                }
-                                output.collect(new Text(url), new Text(outLinks.toString()));
-                                // output.collect(new Text(url), new Text(String.valueOf(counter)));
-                            }
-                        }
-                    }
-                }
-            }
-
-            catch (Exception ex) {
-                LOG.error("Caught Exception", ex);
-                reporter.incrCounter(this._counterGroup, "Exceptions", 1);
-            }
-        }
-    }
-
-    public static class OutlinksReducer extends MapReduceBase implements Reducer<Text, Text, Text, Text> {
-        public void reduce(Text key, Iterator<Text> values, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
-            String pagerank = "1.0\t";
-
-            boolean first = true;
-            while(values.hasNext()){
-                if(!first) pagerank += ",";
-
-                pagerank += values.next().toString();
-                first = false;
-            }
-
-            output.collect(key, new Text(pagerank));
-        }
-    }
-
     public static class FileCountFilter extends Configured implements PathFilter {
 
         private static final int DEFAULT_MAX_FILES = 9999999;
@@ -114,14 +35,10 @@ public class PageRank extends Configured implements Tool {
         private static int fileCount = 0;
         private static int maxFiles = 0;
 
-        /*
-         * Called once per file to be processed.  Returns true until max files
-         * has been reached.
-         */
+        // Called once per file to be processed.  Returns true until max files has been reached.
         public boolean accept(Path path) {
 
-            // If max files hasn't been set then set it to the
-            // configured value.
+            // If max files hasn't been set then set it to the configured value.
             if (FileCountFilter.maxFiles == 0) {
                 Configuration conf = getConf();
                 String confValue = conf.get(MAX_FILES_KEY);
@@ -160,9 +77,11 @@ public class PageRank extends Configured implements Tool {
             throw new IllegalArgumentException("'run()' must be passed an output path.");
 
         outputPath = args[0];
-
         if (args.length > 2)
             maxFiles = args[1];
+
+        // Set the maximum number of metadata files to process.
+        this.getConf().set(MAX_FILES_KEY, maxFiles);
 
         // Put your own AWSAccessKeyId and AWSSecretKey
         this.getConf().set("fs.s3n.awsAccessKeyId", "");
@@ -172,23 +91,18 @@ public class PageRank extends Configured implements Tool {
 
         job.setJarByClass(PageRank.class);
 
-        // Add input path directory.
+        // Set input path directory.
         baseInputPath = "s3n://aws-publicdatasets/common-crawl/parse-output/segment";
         String inputPath = baseInputPath + "/1341690169105/metadata-00112";
         // String inputPath = baseInputPath + "/*/metadata-*";
 
         LOG.info("adding input path '" + inputPath + "'");
         FileInputFormat.addInputPath(job, new Path(inputPath));
-
-        // Set the maximum number of metadata files to process.
-        this.getConf().set(MAX_FILES_KEY, maxFiles);
         FileInputFormat.setInputPathFilter(job, FileCountFilter.class);
 
         // Delete the output path directory if it already exists.
         LOG.info("clearing the output path at '" + outputPath + "'");
-
         FileSystem fs = FileSystem.get(new URI(outputPath), job);
-
         if (fs.exists(new Path(outputPath)))
             fs.delete(new Path(outputPath), true);
 
@@ -208,8 +122,8 @@ public class PageRank extends Configured implements Tool {
         job.setOutputValueClass(Text.class);
 
         // Set which Mapper and Reducer classes to use.
-        job.setMapperClass(OutlinksMapper.class);
-        job.setReducerClass(OutlinksReducer.class);
+        job.setMapperClass(XMLParser.OutlinksMapper.class);
+        job.setReducerClass(XMLParser.OutlinksReducer.class);
 
         if (JobClient.runJob(job).isSuccessful())
             return 0;
