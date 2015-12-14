@@ -3,17 +3,16 @@ package edu.neu.mapreduce.project;
 // Java classes
 import java.io.IOException;
 import java.net.URI;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 // Hadoop classes
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.PathFilter;
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.*;
-import org.apache.hadoop.util.Tool;
-import org.apache.hadoop.util.ToolRunner;
 // Apache Project classes
 import org.apache.log4j.Logger;
 
@@ -25,10 +24,11 @@ import org.apache.log4j.Logger;
  * @author Divya Devaraj
  * @author Christoforus Benvenuto
  */
-public class PageRank extends Configured implements Tool {
+public class PageRank extends Configured {
 
     private static final Logger LOG = Logger.getLogger(PageRank.class);
     private static final String MAX_FILES_KEY = "pagerank.max.files";
+    private static NumberFormat nf = new DecimalFormat("00");
 
     public static class FileCountFilter extends Configured implements PathFilter {
 
@@ -60,85 +60,22 @@ public class PageRank extends Configured implements Tool {
         }
     }
 
-    /**
-     * Implmentation of Tool.run() method, which builds and runs the Hadoop job.
-     *
-     * @param args command line parameters, less common Hadoop job parameters stripped out and
-     *             interpreted by the Tool class.
-     * @return 0 if the Hadoop job completes successfully, 1 if not.
-     */
-    @Override
-    public int run(String[] args) throws Exception {
-
-        String baseInputPath;
-        String outputPath;
-        String maxFiles = "";
-
-        // Read the command line arguments.
-        if (args.length < 1)
-            throw new IllegalArgumentException("'run()' must be passed an output path.");
-
-        outputPath = args[0];
-        if (args.length > 2)
-            maxFiles = args[1];
-
-        // Set the maximum number of metadata files to process.
-        this.getConf().set(MAX_FILES_KEY, maxFiles);
-
-        // Put your own AWSAccessKeyId and AWSSecretKey
-        this.getConf().set("fs.s3n.awsAccessKeyId", "");
-        this.getConf().set("fs.s3n.awsSecretAccessKey", "");
-        // Creates a new job configuration for this Hadoop job.
-        JobConf job = new JobConf(this.getConf());
-
-        job.setJarByClass(PageRank.class);
-
-        // Set input path directory.
-        baseInputPath = "s3n://aws-publicdatasets/common-crawl/parse-output/segment";
-        String inputPath = baseInputPath + "/1341690169105/metadata-00112";
-        // String inputPath = baseInputPath + "/*/metadata-*";
-
-        LOG.info("adding input path '" + inputPath + "'");
-        FileInputFormat.addInputPath(job, new Path(inputPath));
-        FileInputFormat.setInputPathFilter(job, FileCountFilter.class);
-
-        // Delete the output path directory if it already exists.
-        LOG.info("clearing the output path at '" + outputPath + "'");
-        FileSystem fs = FileSystem.get(new URI(outputPath), job);
-        if (fs.exists(new Path(outputPath)))
-            fs.delete(new Path(outputPath), true);
-
-        // Set the path where final output 'part' files will be saved.
-        LOG.info("setting output path to '" + outputPath + "'");
-        FileOutputFormat.setOutputPath(job, new Path(outputPath));
-        FileOutputFormat.setCompressOutput(job, false);
-
-        // Set which InputFormat class to use.
-        job.setInputFormat(SequenceFileInputFormat.class);
-
-        // Set which OutputFormat class to use.
-        job.setOutputFormat(TextOutputFormat.class);
-
-        // Set the output data types.
-        job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(Text.class);
-
-        // Set which Mapper and Reducer classes to use.
-        job.setMapperClass(MetadataParser.OutlinksMapper.class);
-        job.setReducerClass(MetadataParser.OutlinksReducer.class);
-
-        if (JobClient.runJob(job).isSuccessful())
-            return 0;
-        else
-            return 1;
-    }
-
-    public void runMetadataParserParsing(String inputPath, String outputPath) throws IOException {
+    public void runMetadataParserParsing(String outputPath, String maxFiles) throws IOException {
 
         JobConf conf = new JobConf(PageRank.class);
 
-        FileInputFormat.setInputPaths(conf, new Path(inputPath));
+        conf.set("fs.s3n.awsAccessKeyId", "");
+        conf.set("fs.s3n.awsSecretAccessKey", "");
+
+        conf.set(MAX_FILES_KEY, maxFiles);
+
+        String baseInputPath = "s3n://aws-publicdatasets/common-crawl/parse-output/segment";
+        String inputPath = baseInputPath + "/1341690169105/metadata-00112";
+        // inputPath = baseInputPath + "/*/metadata-*";
+
+        FileInputFormat.addInputPath(conf, new Path(inputPath));
         conf.setInputFormat(SequenceFileInputFormat.class);
+        FileInputFormat.setInputPathFilter(conf, FileCountFilter.class);
         conf.setMapperClass(MetadataParser.OutlinksMapper.class);
 
         FileOutputFormat.setOutputPath(conf, new Path(outputPath));
@@ -186,12 +123,26 @@ public class PageRank extends Configured implements Tool {
         JobClient.runJob(conf);
     }
 
-    /**
-     * Main entry point that uses the {@link ToolRunner} class to run the example Hadoop job.
-     */
     public static void main(String[] args) throws Exception {
 
-        int res = ToolRunner.run(new Configuration(), new PageRank(), args);
-        System.exit(res);
+        String outputPath;
+        String maxFiles = "";
+
+        if (args.length < 1)
+            throw new IllegalArgumentException("'run()' must be passed an output path.");
+
+        outputPath = args[0];
+        if (args.length > 2)
+            maxFiles = args[1];
+
+        PageRank pagerank = new PageRank();
+        pagerank.runMetadataParserParsing("crawl/ranking/iter00", maxFiles);
+
+        int runs = 0;
+        for (; runs < 5; runs++) {
+            pagerank.runRankCalculation("crawl/ranking/iter" + nf.format(runs), "crawl/ranking/iter" + nf.format(runs + 1));
+        }
+
+        pagerank.runRankOrdering("crawl/ranking/iter" + nf.format(runs), outputPath);
     }
 }
