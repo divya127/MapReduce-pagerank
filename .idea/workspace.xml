@@ -2,31 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2522fbed-13f3-422b-9393-dee06994c6ab" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/edu.neu.mapreduce.project/PageRank.java" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\.idea\libraries\hadoop_1_2_1.xml" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\.idea\libraries\lemurproject.xml" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\com.neu.mapreduce.project\Outlinks.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\cs6240\LinkArrayWritable.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\cs6240\LinkWritable.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\cs6240\PageRank.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\cs6240\PageRankMapper.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\cs6240\PageRankReducer.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\cs6240\commons-cli-1.3.1.jar" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\cs6240\guava-18.0.jar" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\cs6240\hadoop-ant-1.2.1.jar" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\cs6240\hadoop-client-1.2.1.jar" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\cs6240\hadoop-core-1.2.1.jar" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\cs6240\hadoop-examples-1.2.1.jar" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\cs6240\hadoop-minicluster-1.2.1.jar" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\cs6240\hadoop-test-1.2.1.jar" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\cs6240\hadoop-tools-1.2.1.jar" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\cs6240\hbase-0.94.8.jar" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\edu\cmu\lemurproject\WarcFileInputFormat.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\edu\cmu\lemurproject\WarcFileRecordReader.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\edu\cmu\lemurproject\WarcRecord.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\Programming\NEU\CS6240\Project\src\edu\cmu\lemurproject\WritableWarcRecord.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Project.iml" afterPath="$PROJECT_DIR$/Project.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu.neu.mapreduce.project/PageRank.java" afterPath="$PROJECT_DIR$/src/edu.neu.mapreduce.project/PageRank.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Project.iws" />
@@ -53,8 +29,8 @@
       <file leaf-file-name="PageRank.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/edu.neu.mapreduce.project/PageRank.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.62459195">
-              <caret line="155" column="42" selection-start-line="155" selection-start-column="42" selection-end-line="155" selection-end-column="42" />
+            <state vertical-scroll-proportion="0.46137106">
+              <caret line="155" column="25" selection-start-line="155" selection-start-column="25" selection-end-line="155" selection-end-column="25" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -103,6 +79,7 @@
         <option value="$PROJECT_DIR$/src/cs6240/PageRankMapper.java" />
         <option value="$PROJECT_DIR$/src/com.neu.mapreduce.project/Outlinks.java" />
         <option value="$PROJECT_DIR$/src/edu.neu.mapreduce.project/Outlinks.java" />
+        <option value="$PROJECT_DIR$/src/edu.neu.mapreduce.project/FileCountFilter.java" />
         <option value="$PROJECT_DIR$/src/edu.neu.mapreduce.project/PageRank.java" />
       </list>
     </option>
@@ -462,12 +439,12 @@
       <updated>1449868759174</updated>
       <workItem from="1449868762463" duration="7970000" />
       <workItem from="1449955260535" duration="5236000" />
-      <workItem from="1450106455651" duration="612000" />
+      <workItem from="1450106455651" duration="1490000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="13818000" />
+    <option name="totallyTimeSpent" value="14696000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -541,8 +518,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/edu.neu.mapreduce.project/PageRank.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.62459195">
-          <caret line="155" column="42" selection-start-line="155" selection-start-column="42" selection-end-line="155" selection-end-column="42" />
+        <state vertical-scroll-proportion="0.46137106">
+          <caret line="155" column="25" selection-start-line="155" selection-start-column="25" selection-end-line="155" selection-end-column="25" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

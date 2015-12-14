@@ -8,6 +8,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.PathFilter;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.FileInputFormat;
 import org.apache.hadoop.mapred.FileOutputFormat;
@@ -39,6 +40,7 @@ import com.google.gson.JsonParser;
 public class PageRank extends Configured implements Tool {
 
     private static final Logger LOG = Logger.getLogger(PageRank.class);
+    private static final String MAX_FILES_KEY = "pagerank.max.files";
 
     /**
      * Mapping class that produces statistics about the Common Crawl corpus.
@@ -73,7 +75,6 @@ public class PageRank extends Configured implements Tool {
                                 StringBuilder outLinks = new StringBuilder();
                                 if (content.has("links")) {
                                     JsonArray allLinks = content.getAsJsonArray("links");
-                                    String hrefs = "";
                                     for (int i = 0; i < allLinks.size(); i++) {
                                         JsonObject obj = allLinks.get(i).getAsJsonObject();
                                         if (obj.has("href")) {
@@ -98,6 +99,40 @@ public class PageRank extends Configured implements Tool {
         }
     }
 
+    public static class FileCountFilter extends Configured implements PathFilter {
+
+        private static final int DEFAULT_MAX_FILES = 9999999;
+
+        private static int fileCount = 0;
+        private static int maxFiles = 0;
+
+        /*
+         * Called once per file to be processed.  Returns true until max files
+         * has been reached.
+         */
+        public boolean accept(Path path) {
+
+            // If max files hasn't been set then set it to the
+            // configured value.
+            if (FileCountFilter.maxFiles == 0) {
+                Configuration conf = getConf();
+                String confValue = conf.get(MAX_FILES_KEY);
+
+                if (confValue.length() > 0)
+                    FileCountFilter.maxFiles = Integer.parseInt(confValue);
+                else
+                    FileCountFilter.maxFiles = DEFAULT_MAX_FILES;
+            }
+
+            FileCountFilter.fileCount++;
+
+            if (FileCountFilter.fileCount > FileCountFilter.maxFiles)
+                return false;
+
+            return true;
+        }
+    }
+
     /**
      * Implmentation of Tool.run() method, which builds and runs the Hadoop job.
      *
@@ -110,12 +145,16 @@ public class PageRank extends Configured implements Tool {
 
         String baseInputPath;
         String outputPath;
+        String maxFiles = "";
 
         // Read the command line arguments.
         if (args.length < 1)
             throw new IllegalArgumentException("'run()' must be passed an output path.");
 
         outputPath = args[0];
+
+        if (args.length > 2)
+            maxFiles = args[1];
 
         // Put your own AWSAccessKeyId and AWSSecretKey
         this.getConf().set("fs.s3n.awsAccessKeyId", "");
@@ -125,13 +164,17 @@ public class PageRank extends Configured implements Tool {
 
         job.setJarByClass(PageRank.class);
 
-        // Add input path.
+        // Add input path directory.
         baseInputPath = "s3n://aws-publicdatasets/common-crawl/parse-output/segment";
         String inputPath = baseInputPath + "/1341690169105/metadata-00112";
         // String inputPath = baseInputPath + "/*/metadata-*";
 
         LOG.info("adding input path '" + inputPath + "'");
         FileInputFormat.addInputPath(job, new Path(inputPath));
+
+        // Set the maximum number of metadata files to process.
+        this.getConf().set(MAX_FILES_KEY, maxFiles);
+        FileInputFormat.setInputPathFilter(job, FileCountFilter.class);
 
         // Delete the output path directory if it already exists.
         LOG.info("clearing the output path at '" + outputPath + "'");
