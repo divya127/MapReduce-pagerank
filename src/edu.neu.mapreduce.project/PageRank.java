@@ -1,6 +1,7 @@
 package edu.neu.mapreduce.project;
 
 // Java classes
+import java.io.IOException;
 import java.net.URI;
 // Hadoop classes
 import org.apache.hadoop.conf.Configuration;
@@ -8,8 +9,10 @@ import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.PathFilter;
+import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.*;
+import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 // Apache Project classes
@@ -129,6 +132,39 @@ public class PageRank extends Configured implements Tool {
             return 0;
         else
             return 1;
+    }
+
+    public boolean runXMLParsing() throws IOException, ClassNotFoundException, InterruptedException {
+        Configuration configuration = getConf();
+        Job xmlParser = Job.getInstance(configuration, "xmlParsing");
+        xmlParser.setJarByClass(PageRank.class);
+
+        xmlParser.setOutputKeyClass(Text.class);
+        xmlParser.setOutputValueClass(Text.class);
+
+        return xmlParser.waitForCompletion(true);
+    }
+
+    public boolean runRankCalculation() throws IOException, ClassNotFoundException, InterruptedException {
+        Configuration configuration = getConf();
+        Job rankCalculator = Job.getInstance(configuration, "rankCalculation");
+        rankCalculator.setJarByClass(PageRank.class);
+
+        rankCalculator.setOutputKeyClass(Text.class);
+        rankCalculator.setOutputValueClass(Text.class);
+
+        return rankCalculator.waitForCompletion(true);
+    }
+
+    public boolean runRankOrdering() throws IOException, ClassNotFoundException, InterruptedException {
+        Configuration configuration = getConf();
+        Job rankOrderer = Job.getInstance(configuration, "rankOrderer");
+        rankOrderer.setJarByClass(PageRank.class);
+
+        rankOrderer.setOutputKeyClass(FloatWritable.class);
+        rankOrderer.setOutputValueClass(Text.class);
+
+        return rankOrderer.waitForCompletion(true);
     }
 
     /**
