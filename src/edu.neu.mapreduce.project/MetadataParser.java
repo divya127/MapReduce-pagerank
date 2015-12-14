@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.util.Iterator;
 
-public class XMLParser {
+public class MetadataParser {
 
     private static final Logger LOG = Logger.getLogger(PageRank.class);
 

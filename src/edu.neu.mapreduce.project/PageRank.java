@@ -12,7 +12,6 @@ import org.apache.hadoop.fs.PathFilter;
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.*;
-import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 // Apache Project classes
@@ -125,8 +124,8 @@ public class PageRank extends Configured implements Tool {
         job.setOutputValueClass(Text.class);
 
         // Set which Mapper and Reducer classes to use.
-        job.setMapperClass(XMLParser.OutlinksMapper.class);
-        job.setReducerClass(XMLParser.OutlinksReducer.class);
+        job.setMapperClass(MetadataParser.OutlinksMapper.class);
+        job.setReducerClass(MetadataParser.OutlinksReducer.class);
 
         if (JobClient.runJob(job).isSuccessful())
             return 0;
@@ -134,37 +133,57 @@ public class PageRank extends Configured implements Tool {
             return 1;
     }
 
-    public boolean runXMLParsing() throws IOException, ClassNotFoundException, InterruptedException {
-        Configuration configuration = getConf();
-        Job xmlParser = Job.getInstance(configuration, "xmlParsing");
-        xmlParser.setJarByClass(PageRank.class);
+    public void runMetadataParserParsing(String inputPath, String outputPath) throws IOException {
 
-        xmlParser.setOutputKeyClass(Text.class);
-        xmlParser.setOutputValueClass(Text.class);
+        JobConf conf = new JobConf(PageRank.class);
 
-        return xmlParser.waitForCompletion(true);
+        FileInputFormat.setInputPaths(conf, new Path(inputPath));
+        conf.setInputFormat(SequenceFileInputFormat.class);
+        conf.setMapperClass(MetadataParser.OutlinksMapper.class);
+
+        FileOutputFormat.setOutputPath(conf, new Path(outputPath));
+        conf.setOutputFormat(TextOutputFormat.class);
+        conf.setOutputKeyClass(Text.class);
+        conf.setOutputValueClass(Text.class);
+        conf.setReducerClass(MetadataParser.OutlinksReducer.class);
+
+        JobClient.runJob(conf);
     }
 
-    public boolean runRankCalculation() throws IOException, ClassNotFoundException, InterruptedException {
-        Configuration configuration = getConf();
-        Job rankCalculator = Job.getInstance(configuration, "rankCalculation");
-        rankCalculator.setJarByClass(PageRank.class);
+    private void runRankCalculation(String inputPath, String outputPath) throws IOException {
 
-        rankCalculator.setOutputKeyClass(Text.class);
-        rankCalculator.setOutputValueClass(Text.class);
+        JobConf conf = new JobConf(PageRank.class);
 
-        return rankCalculator.waitForCompletion(true);
+        conf.setOutputKeyClass(Text.class);
+        conf.setOutputValueClass(Text.class);
+
+        conf.setInputFormat(TextInputFormat.class);
+        conf.setOutputFormat(TextOutputFormat.class);
+
+        FileInputFormat.setInputPaths(conf, new Path(inputPath));
+        FileOutputFormat.setOutputPath(conf, new Path(outputPath));
+
+        conf.setMapperClass(RankCalculator.RankMapper.class);
+        conf.setReducerClass(RankCalculator.RankReducer.class);
+
+        JobClient.runJob(conf);
     }
 
-    public boolean runRankOrdering() throws IOException, ClassNotFoundException, InterruptedException {
-        Configuration configuration = getConf();
-        Job rankOrderer = Job.getInstance(configuration, "rankOrderer");
-        rankOrderer.setJarByClass(PageRank.class);
+    private void runRankOrdering(String inputPath, String outputPath) throws IOException {
 
-        rankOrderer.setOutputKeyClass(FloatWritable.class);
-        rankOrderer.setOutputValueClass(Text.class);
+        JobConf conf = new JobConf(PageRank.class);
 
-        return rankOrderer.waitForCompletion(true);
+        conf.setOutputKeyClass(FloatWritable.class);
+        conf.setOutputValueClass(Text.class);
+        conf.setInputFormat(TextInputFormat.class);
+        conf.setOutputFormat(TextOutputFormat.class);
+
+        FileInputFormat.setInputPaths(conf, new Path(inputPath));
+        FileOutputFormat.setOutputPath(conf, new Path(outputPath));
+
+        conf.setMapperClass(RankOrderer.OrderMapper.class);
+
+        JobClient.runJob(conf);
     }
 
     /**
