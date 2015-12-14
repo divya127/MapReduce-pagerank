@@ -3,6 +3,7 @@ package edu.neu.mapreduce.project;
 // Java classes
 import java.io.IOException;
 import java.net.URI;
+import java.util.Iterator;
 // Hadoop classes
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -10,16 +11,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.PathFilter;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.FileInputFormat;
-import org.apache.hadoop.mapred.FileOutputFormat;
-import org.apache.hadoop.mapred.JobClient;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.MapReduceBase;
-import org.apache.hadoop.mapred.Mapper;
-import org.apache.hadoop.mapred.OutputCollector;
-import org.apache.hadoop.mapred.Reporter;
-import org.apache.hadoop.mapred.SequenceFileInputFormat;
-import org.apache.hadoop.mapred.TextOutputFormat;
+import org.apache.hadoop.mapred.*;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 // Apache Project classes
@@ -96,6 +88,22 @@ public class PageRank extends Configured implements Tool {
                 LOG.error("Caught Exception", ex);
                 reporter.incrCounter(this._counterGroup, "Exceptions", 1);
             }
+        }
+    }
+
+    public static class OutlinksReducer extends MapReduceBase implements Reducer<Text, Text, Text, Text> {
+        public void reduce(Text key, Iterator<Text> values, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
+            String pagerank = "1.0\t";
+
+            boolean first = true;
+            while(values.hasNext()){
+                if(!first) pagerank += ",";
+
+                pagerank += values.next().toString();
+                first = false;
+            }
+
+            output.collect(key, new Text(pagerank));
         }
     }
 
@@ -201,8 +209,7 @@ public class PageRank extends Configured implements Tool {
 
         // Set which Mapper and Reducer classes to use.
         job.setMapperClass(OutlinksMapper.class);
-        // job.setCombinerClass(LongSumReducer.class);
-        // job.setReducerClass(LongSumReducer.class);
+        job.setReducerClass(OutlinksReducer.class);
 
         if (JobClient.runJob(job).isSuccessful())
             return 0;

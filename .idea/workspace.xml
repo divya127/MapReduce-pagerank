@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="2522fbed-13f3-422b-9393-dee06994c6ab" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu.neu.mapreduce.project/PageRank.java" afterPath="$PROJECT_DIR$/src/edu.neu.mapreduce.project/PageRank.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Project.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,8 +28,8 @@
       <file leaf-file-name="PageRank.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/edu.neu.mapreduce.project/PageRank.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.46137106">
-              <caret line="155" column="25" selection-start-line="155" selection-start-column="25" selection-end-line="155" selection-end-column="25" />
+            <state vertical-scroll-proportion="0.7062024">
+              <caret line="102" column="30" selection-start-line="102" selection-start-column="30" selection-end-line="102" selection-end-column="30" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -439,12 +438,12 @@
       <updated>1449868759174</updated>
       <workItem from="1449868762463" duration="7970000" />
       <workItem from="1449955260535" duration="5236000" />
-      <workItem from="1450106455651" duration="1490000" />
+      <workItem from="1450106455651" duration="2251000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="14696000" />
+    <option name="totallyTimeSpent" value="15457000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -518,8 +517,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/edu.neu.mapreduce.project/PageRank.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.46137106">
-          <caret line="155" column="25" selection-start-line="155" selection-start-column="25" selection-end-line="155" selection-end-column="25" />
+        <state vertical-scroll-proportion="0.7062024">
+          <caret line="102" column="30" selection-start-line="102" selection-start-column="30" selection-end-line="102" selection-end-column="30" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
