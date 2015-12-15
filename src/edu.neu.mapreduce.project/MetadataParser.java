@@ -40,7 +40,6 @@ public class MetadataParser {
                         if (content.has("type")) {
                             if ("html-doc".equalsIgnoreCase(content.get("type").getAsString().trim()
                                     .toLowerCase())) {
-                                int counter = 0;
                                 StringBuilder outLinks = new StringBuilder();
                                 if (content.has("links")) {
                                     JsonArray allLinks = content.getAsJsonArray("links");
@@ -48,13 +47,13 @@ public class MetadataParser {
                                         JsonObject obj = allLinks.get(i).getAsJsonObject();
                                         if (obj.has("href")) {
                                             String href = obj.get("href").getAsString().trim();
+                                            href = org.apache.commons.lang3.StringEscapeUtils.escapeJava(href);
+                                        	//String href = escapeJava(obj.get("href").getAsString().trim());
                                             outLinks.append(href).append(",");
-                                            counter++;
                                         }
                                     }
                                 }
                                 output.collect(new Text(url), new Text(outLinks.toString()));
-                                // output.collect(new Text(url), new Text(String.valueOf(counter)));
                             }
                         }
                     }
