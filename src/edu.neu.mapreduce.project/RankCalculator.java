@@ -70,8 +70,8 @@ public class RankCalculator {
 
                 split = pageWithRank.split("\\t");
 
-                float pageRank = Float.valueOf(split[0]);
-                int countOutLinks = Integer.valueOf(split[1]);
+                float pageRank = Float.valueOf(split[1]);
+                int countOutLinks = Integer.valueOf(split[2]);
 
                 sumShareOtherPageRanks += (pageRank/countOutLinks);
             }

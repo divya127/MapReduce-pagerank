@@ -3,18 +3,17 @@ package edu.neu.mapreduce.project;
 // Java classes
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 // Hadoop classes
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.PathFilter;
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.*;
-// Apache Project classes
-import org.apache.log4j.Logger;
+import org.apache.hadoop.mapred.FileInputFormat;
+import org.apache.hadoop.mapred.SequenceFileInputFormat;
+import org.apache.hadoop.mapred.TextInputFormat;
 
 /**
  * Use of Common Crawl 'metadata' files to quickly gather high level information about the corpus'
@@ -24,58 +23,32 @@ import org.apache.log4j.Logger;
  * @author Divya Devaraj
  * @author Christoforus Benvenuto
  */
-public class PageRank extends Configured {
+public class PageRank {
 
-    private static final Logger LOG = Logger.getLogger(PageRank.class);
-    private static final String MAX_FILES_KEY = "pagerank.max.files";
-    private static NumberFormat nf = new DecimalFormat("00");
+    private static final String AWS_ACCESS_KEY_ID = "";
+    private static final String AWS_SECRET_ACCESS_KEY = "";
+    private static final String AWS_S3_BUCKET_NAME = "";
 
-    public static class FileCountFilter extends Configured implements PathFilter {
-
-        private static final int DEFAULT_MAX_FILES = 9999999;
-
-        private static int fileCount = 0;
-        private static int maxFiles = 0;
-
-        // Called once per file to be processed.  Returns true until max files has been reached.
-        public boolean accept(Path path) {
-
-            // If max files hasn't been set then set it to the configured value.
-            if (FileCountFilter.maxFiles == 0) {
-                Configuration conf = getConf();
-                String confValue = conf.get(MAX_FILES_KEY);
-
-                if (confValue.length() > 0)
-                    FileCountFilter.maxFiles = Integer.parseInt(confValue);
-                else
-                    FileCountFilter.maxFiles = DEFAULT_MAX_FILES;
-            }
-
-            FileCountFilter.fileCount++;
-
-            if (FileCountFilter.fileCount > FileCountFilter.maxFiles)
-                return false;
-
-            return true;
-        }
-    }
-
-    public void runMetadataParserParsing(String outputPath, String maxFiles) throws IOException {
+    public void runMetadataParsing(String outputPath, int maxFiles) throws IOException, URISyntaxException {
 
         JobConf conf = new JobConf(PageRank.class);
 
-        conf.set("fs.s3n.awsAccessKeyId", "");
-        conf.set("fs.s3n.awsSecretAccessKey", "");
-
-        conf.set(MAX_FILES_KEY, maxFiles);
+        conf.set("fs.s3n.awsAccessKeyId", AWS_ACCESS_KEY_ID);
+        conf.set("fs.s3n.awsSecretAccessKey", AWS_SECRET_ACCESS_KEY);
 
         String baseInputPath = "s3n://aws-publicdatasets/common-crawl/parse-output/segment";
-        String inputPath = baseInputPath + "/1341690169105/metadata-00112";
-        // inputPath = baseInputPath + "/*/metadata-*";
+        // String inputPath = baseInputPath + "/1341690169105/metadata-00112";
+        // String inputPath = baseInputPath + "/*/metadata-*";
+        // FileInputFormat.addInputPath(conf, new Path(inputPath));
 
-        FileInputFormat.addInputPath(conf, new Path(inputPath));
+        String inputPath;
+        NumberFormat numberFormat = new DecimalFormat("00000");
+        for (int i = 0; i < maxFiles; i++) {
+            inputPath = baseInputPath + "/1346823845675/metadata-" + numberFormat.format(i);
+            FileInputFormat.addInputPath(conf, new Path(inputPath));
+        }
+
         conf.setInputFormat(SequenceFileInputFormat.class);
-        FileInputFormat.setInputPathFilter(conf, FileCountFilter.class);
         conf.setMapperClass(MetadataParser.OutlinksMapper.class);
 
         FileOutputFormat.setOutputPath(conf, new Path(outputPath));
@@ -126,23 +99,24 @@ public class PageRank extends Configured {
     public static void main(String[] args) throws Exception {
 
         String outputPath;
-        String maxFiles = "";
+        String maxFiles = "0";
 
         if (args.length < 1)
             throw new IllegalArgumentException("'run()' must be passed an output path.");
 
         outputPath = args[0];
-        if (args.length > 2)
+        if (args.length > 1)
             maxFiles = args[1];
 
         PageRank pagerank = new PageRank();
-        pagerank.runMetadataParserParsing("crawl/ranking/iter00", maxFiles);
+        pagerank.runMetadataParsing("s3://" + AWS_S3_BUCKET_NAME + "/crawl/ranking/iter00", Integer.parseInt(maxFiles));
 
+        NumberFormat nf = new DecimalFormat("00");
         int runs = 0;
         for (; runs < 5; runs++) {
-            pagerank.runRankCalculation("crawl/ranking/iter" + nf.format(runs), "crawl/ranking/iter" + nf.format(runs + 1));
+            pagerank.runRankCalculation("s3://" + AWS_S3_BUCKET_NAME + "/crawl/ranking/iter" + nf.format(runs), "s3://" + AWS_S3_BUCKET_NAME + "/crawl/ranking/iter" + nf.format(runs + 1));
         }
 
-        pagerank.runRankOrdering("crawl/ranking/iter" + nf.format(runs), outputPath);
+        pagerank.runRankOrdering("s3://" + AWS_S3_BUCKET_NAME + "/crawl/ranking/iter" + nf.format(runs), outputPath);
     }
 }

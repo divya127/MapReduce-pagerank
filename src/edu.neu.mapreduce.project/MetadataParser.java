@@ -5,14 +5,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.*;
-import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Iterator;
 
 public class MetadataParser {
-
-    private static final Logger LOG = Logger.getLogger(PageRank.class);
 
     public static class OutlinksMapper extends MapReduceBase implements Mapper<Text, Text, Text, Text> {
 
@@ -40,7 +37,6 @@ public class MetadataParser {
                         if (content.has("type")) {
                             if ("html-doc".equalsIgnoreCase(content.get("type").getAsString().trim()
                                     .toLowerCase())) {
-                                int counter = 0;
                                 StringBuilder outLinks = new StringBuilder();
                                 if (content.has("links")) {
                                     JsonArray allLinks = content.getAsJsonArray("links");
@@ -48,13 +44,12 @@ public class MetadataParser {
                                         JsonObject obj = allLinks.get(i).getAsJsonObject();
                                         if (obj.has("href")) {
                                             String href = obj.get("href").getAsString().trim();
+                                            href = org.apache.commons.lang3.StringEscapeUtils.escapeJava(href);
                                             outLinks.append(href).append(",");
-                                            counter++;
                                         }
                                     }
                                 }
                                 output.collect(new Text(url), new Text(outLinks.toString()));
-                                // output.collect(new Text(url), new Text(String.valueOf(counter)));
                             }
                         }
                     }
@@ -62,7 +57,6 @@ public class MetadataParser {
             }
 
             catch (Exception ex) {
-                LOG.error("Caught Exception", ex);
                 reporter.incrCounter(this._counterGroup, "Exceptions", 1);
             }
         }
