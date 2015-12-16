@@ -2,7 +2,6 @@ package edu.neu.mapreduce.project;
 
 // Java classes
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
