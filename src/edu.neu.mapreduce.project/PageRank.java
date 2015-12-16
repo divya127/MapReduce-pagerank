@@ -2,7 +2,6 @@ package edu.neu.mapreduce.project;
 
 // Java classes
 import java.io.IOException;
-import java.net.URI;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 // Hadoop classes
@@ -64,14 +63,14 @@ public class PageRank extends Configured {
 
         JobConf conf = new JobConf(PageRank.class);
 
-        conf.set("fs.s3n.awsAccessKeyId", "");
-        conf.set("fs.s3n.awsSecretAccessKey", "");
+        conf.set("fs.s3n.awsAccessKeyId", "AKIAJTX4ZLWX43R4XP5Q");
+        conf.set("fs.s3n.awsSecretAccessKey", "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");
 
         conf.set(MAX_FILES_KEY, maxFiles);
 
         String baseInputPath = "s3n://aws-publicdatasets/common-crawl/parse-output/segment";
-        String inputPath = baseInputPath + "/1341690169105/metadata-00112";
-        // inputPath = baseInputPath + "/*/metadata-*";
+       // String inputPath = baseInputPath + "/1341690169105/metadata-00112";
+        String inputPath = baseInputPath + "/*/metadata-*";
 
         FileInputFormat.addInputPath(conf, new Path(inputPath));
         conf.setInputFormat(SequenceFileInputFormat.class);
