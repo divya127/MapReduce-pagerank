@@ -63,8 +63,8 @@ public class PageRank extends Configured {
 
         JobConf conf = new JobConf(PageRank.class);
 
-        conf.set("fs.s3n.awsAccessKeyId", "AKIAJTX4ZLWX43R4XP5Q");
-        conf.set("fs.s3n.awsSecretAccessKey", "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");
+        conf.set("fs.s3n.awsAccessKeyId", "");
+        conf.set("fs.s3n.awsSecretAccessKey", "");
 
         conf.set(MAX_FILES_KEY, maxFiles);
 
